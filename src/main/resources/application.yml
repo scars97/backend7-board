@@ -3,7 +3,7 @@ spring:
     default: local
 
   datasource:
-    url: jdbc:h2:mem:~/frameworkStudy
+    url: jdbc:h2:tcp://localhost/~/frameworkStudy
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -20,7 +20,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
