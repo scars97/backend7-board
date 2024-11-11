@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
@@ -22,5 +24,13 @@ public class BoardService {
         Board saveBoard = boardRepository.save(board);
 
         return BoardResponse.of(saveBoard);
+    }
+
+    public List<BoardResponse> findAll() {
+        List<Board> findBoards = boardRepository.findAllByOrderByCreateAtDesc();
+
+        return findBoards.stream()
+                .map(BoardResponse::of)
+                .toList();
     }
 }
