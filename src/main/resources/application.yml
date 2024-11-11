@@ -3,7 +3,7 @@ spring:
     default: local
 
   datasource:
-    url:
+    url: jdbc:h2:mem:~/frameworkStudy
     driver-class-name: org.h2.Driver
     username: sa
     password:
