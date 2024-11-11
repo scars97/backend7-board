@@ -1,6 +1,7 @@
 package com.backend7.frameworkstudy.domain.board.api;
 
 import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
+import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.service.BoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +12,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BoardController.class)
 class BoardControllerTest {
@@ -43,6 +47,22 @@ class BoardControllerTest {
                 post("/api/board")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk());
+    }
+
+    @DisplayName("게시글 목록을 내림차순으로 조회한다.")
+    @Test
+    void findAll_orderByCreateAtDesc() throws Exception {
+        // given
+        List<BoardResponse> result = List.of();
+
+        when(boardService.findAll()).thenReturn(result);
+
+        // when //then
+        mockMvc.perform(
+                get("/api/board")
             )
             .andDo(print())
             .andExpect(status().isOk());
