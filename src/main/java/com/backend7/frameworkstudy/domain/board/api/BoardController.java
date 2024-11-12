@@ -2,6 +2,7 @@ package com.backend7.frameworkstudy.domain.board.api;
 
 import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
+import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,12 @@ public class BoardController {
     public ResponseEntity<BoardResponse> findBoard(@PathVariable("id") Long id) {
         BoardResponse findBoard = boardService.findBoardBy(id);
         return ResponseEntity.ok(findBoard);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<BoardResponse> editBoard(
+            @PathVariable("id") Long id, @RequestBody BoardUpdateRequest request) {
+        BoardResponse response = boardService.editBoard(id, request);
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,5 +1,6 @@
 package com.backend7.frameworkstudy.domain.board.domain;
 
+import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,5 +34,16 @@ public class Board extends BaseEntity {
         this.content = content;
         this.username = username;
         this.password = password;
+    }
+
+    public void update(BoardUpdateRequest request) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.username = request.getUsername();
+    }
+
+    // 고민필요 - 수정뿐만 아니라 삭제도 password 체크를 해야 한다.
+    public boolean isNotSamePassword(String requestPassword) {
+        return !this.password.equals(requestPassword);
     }
 }
