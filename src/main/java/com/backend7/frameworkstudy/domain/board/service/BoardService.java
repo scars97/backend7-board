@@ -33,4 +33,11 @@ public class BoardService {
                 .map(BoardResponse::of)
                 .toList();
     }
+
+    public BoardResponse findBoardBy(Long id) {
+        Board findBoard = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        return BoardResponse.of(findBoard);
+    }
 }
