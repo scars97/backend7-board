@@ -2,6 +2,7 @@ package com.backend7.frameworkstudy.domain.board.service;
 
 import com.backend7.frameworkstudy.domain.board.domain.Board;
 import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
+import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
@@ -65,7 +66,7 @@ class BoardServiceTest {
 
     @DisplayName("비밀번호 일치여부를 확인하고 게시글을 수정한다.")
     @Test
-    void editBoardAfterCheckForPasswordMatch() {
+    void checkForPasswordMatchThenEditBoard() {
         // given
         Board saveBoard = boardRepository.save(create());
 
@@ -89,6 +90,9 @@ class BoardServiceTest {
                 .contains("게시글123123", "게시글 내용123123", "test1111@test.com");
     }
 
+    // 수정, 삭제 시 비밀번호 일치 여부 확인 필요.
+    // 2개의 테스트를 만들기엔 중복이 많다.
+    // 통합적인 테스트를 작성해볼 수는 없을까?
     @DisplayName("비밀번호가 일치하지 않는 경우 게시글이 수정되지 않고 예외가 발생한다.")
     @Test
     void passwordNotMatchThenExceptionThrown() {
@@ -108,6 +112,24 @@ class BoardServiceTest {
                 .hasMessage("비밀번호가 일치하지 않습니다.")
                 .isInstanceOf(IllegalArgumentException.class);
         assertThat(saveBoard.getTitle()).isNotEqualTo(updateRequest.getTitle());
+    }
+
+    @DisplayName("비밀번호 일치여부를 확인하고 게시글을 삭제한다.")
+    @Test
+    void deleteBoard() {
+        // given
+        Board saveBoard = boardRepository.save(create());
+
+        Long deleteId = saveBoard.getId();
+        BoardDeleteRequest deleteRequest = BoardDeleteRequest.builder()
+                .password("1234")
+                .build();
+
+        // when
+        boardService.deleteBoard(deleteId, deleteRequest);
+
+        //then
+        assertThat(boardRepository.existsById(deleteId)).isFalse();
     }
 
     private Board create() {
