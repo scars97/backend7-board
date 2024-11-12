@@ -2,6 +2,7 @@ package com.backend7.frameworkstudy.domain.board.service;
 
 import com.backend7.frameworkstudy.domain.board.domain.Board;
 import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
+import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
@@ -53,5 +54,17 @@ public class BoardService {
 
         findBoard.update(request);
         return BoardResponse.of(findBoard);
+    }
+
+    @Transactional
+    public void deleteBoard(Long id, BoardDeleteRequest request) {
+        Board findBoard = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        if (findBoard.isNotSamePassword(request.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        boardRepository.deleteById(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.backend7.frameworkstudy.domain.board.api;
 
 import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
+import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.service.BoardService;
@@ -40,5 +41,12 @@ public class BoardController {
             @PathVariable("id") Long id, @RequestBody BoardUpdateRequest request) {
         BoardResponse response = boardService.editBoard(id, request);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBoard(
+            @PathVariable("id") Long id, @RequestBody BoardDeleteRequest request) {
+        boardService.deleteBoard(id, request);
+        return ResponseEntity.noContent().build();
     }
 }
