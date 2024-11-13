@@ -1,6 +1,5 @@
 package com.backend7.frameworkstudy.global.common;
 
-import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -33,6 +32,8 @@ public class ApiResponse<T> {
         return new ApiResponse<>(successType.getStatus(), successType.getMessage());
     }
 
+    // 코드 중복 - Error 와 관련된 코드
+    // ErrorResponse 를 따로 만들어 관리해줘야할까?
     public static <T> ApiResponse<T> fail(ApiResultType failType) {
         return new ApiResponse<>(failType.getStatus(), failType.getMessage());
     }
