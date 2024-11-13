@@ -5,12 +5,15 @@ import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
+import com.backend7.frameworkstudy.domain.board.exception.BoardException;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.backend7.frameworkstudy.domain.board.exception.ErrorType.*;
 
 @Transactional(readOnly = true)
 @Service
@@ -38,7 +41,7 @@ public class BoardService {
 
     public BoardResponse findBoardBy(Long id) {
         Board findBoard = boardRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new BoardException(BOARD_NOT_FOUND));
 
         return BoardResponse.of(findBoard);
     }
@@ -46,10 +49,10 @@ public class BoardService {
     @Transactional
     public BoardResponse editBoard(Long id, BoardUpdateRequest request) {
         Board findBoard = boardRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new BoardException(BOARD_NOT_FOUND));
 
         if (findBoard.isNotSamePassword(request.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new BoardException(PASSWORD_IS_NOT_MATCH);
         }
 
         findBoard.update(request);
@@ -59,10 +62,10 @@ public class BoardService {
     @Transactional
     public void deleteBoard(Long id, BoardDeleteRequest request) {
         Board findBoard = boardRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new BoardException(BOARD_NOT_FOUND));
 
         if (findBoard.isNotSamePassword(request.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new BoardException(PASSWORD_IS_NOT_MATCH);
         }
 
         boardRepository.deleteById(id);
