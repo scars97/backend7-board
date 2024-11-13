@@ -11,16 +11,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -50,6 +50,16 @@ class BoardControllerTest {
                 .password("12341234")
                 .build();
 
+        given(boardService.createBoard(any(BoardCreateRequest.class)))
+                .willReturn(BoardResponse.builder()
+                        .id(1L)
+                        .title("게시글1")
+                        .content("게시글 작성 내용 ㅇㅇㅇㅇㅇㅇㅇㅇ")
+                        .username("test@test.com")
+                        .createAt(LocalDateTime.now())
+                        .modifiedAt(LocalDateTime.now())
+                        .build());
+
         // when //then
         mockMvc.perform(
                 post("/api/board")
@@ -57,7 +67,11 @@ class BoardControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(200))
+            .andExpect(jsonPath("$.status").value("OK"))
+            .andExpect(jsonPath("$.message").value("게시글이 저장되었습니다."))
+            .andExpect(jsonPath("$.data").isNotEmpty());
     }
 
     @DisplayName("게시글 목록을 내림차순으로 조회한다.")
@@ -91,6 +105,10 @@ class BoardControllerTest {
                             .content(objectMapper.writeValueAsString(deleteRequest))
                             .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(204))
+                .andExpect(jsonPath("$.status").value("NO_CONTENT"))
+                .andExpect(jsonPath("$.message").value("게시글이 삭제되었습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 }
