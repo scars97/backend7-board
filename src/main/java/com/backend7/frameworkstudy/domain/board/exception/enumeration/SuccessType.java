@@ -1,4 +1,4 @@
-package com.backend7.frameworkstudy.domain.board.exception;
+package com.backend7.frameworkstudy.domain.board.exception.enumeration;
 
 import com.backend7.frameworkstudy.global.common.ApiResultType;
 import org.springframework.http.HttpStatus;

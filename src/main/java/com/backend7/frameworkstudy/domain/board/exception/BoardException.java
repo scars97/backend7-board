@@ -1,5 +1,6 @@
 package com.backend7.frameworkstudy.domain.board.exception;
 
+import com.backend7.frameworkstudy.domain.board.exception.enumeration.ErrorType;
 import lombok.Getter;
 
 @Getter

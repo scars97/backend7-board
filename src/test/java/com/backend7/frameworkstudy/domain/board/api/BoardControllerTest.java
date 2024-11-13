@@ -1,8 +1,8 @@
 package com.backend7.frameworkstudy.domain.board.api;
 
-import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
-import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
-import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
+import com.backend7.frameworkstudy.domain.board.dto.request.BoardCreateRequest;
+import com.backend7.frameworkstudy.domain.board.dto.request.BoardDeleteRequest;
+import com.backend7.frameworkstudy.domain.board.dto.response.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.service.BoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;

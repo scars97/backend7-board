@@ -1,6 +1,6 @@
 package com.backend7.frameworkstudy.domain.board.domain;
 
-import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
+import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

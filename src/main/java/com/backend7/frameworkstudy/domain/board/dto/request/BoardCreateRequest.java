@@ -1,4 +1,4 @@
-package com.backend7.frameworkstudy.domain.board.dto;
+package com.backend7.frameworkstudy.domain.board.dto.request;
 
 import com.backend7.frameworkstudy.domain.board.domain.Board;
 import lombok.Builder;

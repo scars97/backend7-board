@@ -1,12 +1,12 @@
 package com.backend7.frameworkstudy.domain.board.service;
 
 import com.backend7.frameworkstudy.domain.board.domain.Board;
-import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
-import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
-import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
-import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
+import com.backend7.frameworkstudy.domain.board.dto.request.BoardCreateRequest;
+import com.backend7.frameworkstudy.domain.board.dto.request.BoardDeleteRequest;
+import com.backend7.frameworkstudy.domain.board.dto.response.BoardResponse;
+import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.exception.BoardException;
-import com.backend7.frameworkstudy.domain.board.exception.ErrorType;
+import com.backend7.frameworkstudy.domain.board.exception.enumeration.ErrorType;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
