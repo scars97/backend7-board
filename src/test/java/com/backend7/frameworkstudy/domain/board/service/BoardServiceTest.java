@@ -5,13 +5,17 @@ import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
+import com.backend7.frameworkstudy.domain.board.exception.BoardException;
+import com.backend7.frameworkstudy.domain.board.exception.ErrorType;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -60,10 +64,14 @@ class BoardServiceTest {
 
         // when //then
         assertThatThrownBy(() -> boardService.findBoardBy(2L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글이 존재하지 않습니다.");
+                .isInstanceOf(BoardException.class)
+                .hasFieldOrPropertyWithValue("errorType", ErrorType.BOARD_NOT_FOUND)
+                .extracting("errorType")
+                .extracting("status", "message")
+                .containsExactly(HttpStatus.NOT_FOUND, "존재하지 않은 게시글입니다.");
     }
 
+    @Transactional
     @DisplayName("비밀번호 일치여부를 확인하고 게시글을 수정한다.")
     @Test
     void checkForPasswordMatchThenEditBoard() {
@@ -95,7 +103,7 @@ class BoardServiceTest {
     // 통합적인 테스트를 작성해볼 수는 없을까?
     @DisplayName("비밀번호가 일치하지 않는 경우 게시글이 수정되지 않고 예외가 발생한다.")
     @Test
-    void passwordNotMatchThenExceptionThrown() {
+    void editBoard_passwordNotMatchThenExceptionThrown() {
         // given
         Board saveBoard = boardRepository.save(create());
 
@@ -107,11 +115,16 @@ class BoardServiceTest {
                 .password("11111")
                 .build();
 
-        // when //then
+        // when // then
         assertThatThrownBy(() -> boardService.editBoard(updateId, updateRequest))
-                .hasMessage("비밀번호가 일치하지 않습니다.")
-                .isInstanceOf(IllegalArgumentException.class);
-        assertThat(saveBoard.getTitle()).isNotEqualTo(updateRequest.getTitle());
+                .isInstanceOf(BoardException.class)
+                .hasFieldOrPropertyWithValue("errorType", ErrorType.PASSWORD_IS_NOT_MATCH)
+                .extracting("errorType")
+                .extracting("status", "message")
+                .containsExactly( HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+
+        BoardResponse response = boardService.findBoardBy(updateId);
+        assertThat(response.getTitle()).isNotEqualTo(updateRequest.getTitle());
     }
 
     @DisplayName("비밀번호 일치여부를 확인하고 게시글을 삭제한다.")
@@ -130,6 +143,28 @@ class BoardServiceTest {
 
         //then
         assertThat(boardRepository.existsById(deleteId)).isFalse();
+    }
+
+    @DisplayName("비밀번호가 일치하지 않는 경우 게시글이 삭제되지 않고 예외가 발생한다.")
+    @Test
+    void deleteBoard_passwordNotMatchThenExceptionThrown() {
+        // given
+        Board saveBoard = boardRepository.save(create());
+
+        Long deleteId = saveBoard.getId();
+        BoardDeleteRequest deleteRequest = BoardDeleteRequest.builder()
+                .password("11111")
+                .build();
+
+        // when // then
+        assertThatThrownBy(() -> boardService.deleteBoard(deleteId, deleteRequest))
+                .isInstanceOf(BoardException.class)
+                .hasFieldOrPropertyWithValue("errorType", ErrorType.PASSWORD_IS_NOT_MATCH)
+                .extracting("errorType")
+                .extracting("status", "message")
+                .containsExactly( HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+
+        assertThat(boardRepository.existsById(deleteId)).isTrue();
     }
 
     private Board create() {
