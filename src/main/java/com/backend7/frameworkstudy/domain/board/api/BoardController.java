@@ -4,7 +4,9 @@ import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.BoardUpdateRequest;
+import com.backend7.frameworkstudy.domain.board.exception.SuccessType;
 import com.backend7.frameworkstudy.domain.board.service.BoardService;
+import com.backend7.frameworkstudy.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,34 +21,34 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("")
-    public ResponseEntity<BoardResponse> createBoard(@RequestBody BoardCreateRequest request) {
+    public ApiResponse<BoardResponse> createBoard(@RequestBody BoardCreateRequest request) {
         BoardResponse response = boardService.createBoard(request);
-        return ResponseEntity.ok(response);
+        return ApiResponse.ok(SuccessType.CREATE_BOARD, response);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<BoardResponse>> findAll() {
-        List<BoardResponse> responses = boardService.findAll();
-        return ResponseEntity.ok(responses);
+    public ApiResponse<List<BoardResponse>> findAll() {
+        List<BoardResponse> response = boardService.findAll();
+        return ApiResponse.ok(SuccessType.LOADED_BOARD_LIST, response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardResponse> findBoard(@PathVariable("id") Long id) {
-        BoardResponse findBoard = boardService.findBoardBy(id);
-        return ResponseEntity.ok(findBoard);
+    public ApiResponse<BoardResponse> findBoard(@PathVariable("id") Long id) {
+        BoardResponse response = boardService.findBoardBy(id);
+        return ApiResponse.ok(SuccessType.LOADED_BOARD, response);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<BoardResponse> editBoard(
+    public ApiResponse<BoardResponse> editBoard(
             @PathVariable("id") Long id, @RequestBody BoardUpdateRequest request) {
         BoardResponse response = boardService.editBoard(id, request);
-        return ResponseEntity.ok(response);
+        return ApiResponse.ok(SuccessType.EDIT_BOARD, response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBoard(
+    public ApiResponse<Void> deleteBoard(
             @PathVariable("id") Long id, @RequestBody BoardDeleteRequest request) {
         boardService.deleteBoard(id, request);
-        return ResponseEntity.noContent().build();
+        return ApiResponse.ok(SuccessType.DELETE_BOARD);
     }
 }
