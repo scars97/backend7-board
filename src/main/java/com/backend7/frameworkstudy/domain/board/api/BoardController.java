@@ -8,7 +8,6 @@ import com.backend7.frameworkstudy.domain.board.exception.SuccessType;
 import com.backend7.frameworkstudy.domain.board.service.BoardService;
 import com.backend7.frameworkstudy.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

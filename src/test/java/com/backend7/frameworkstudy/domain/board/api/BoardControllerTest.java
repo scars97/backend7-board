@@ -1,13 +1,10 @@
 package com.backend7.frameworkstudy.domain.board.api;
 
-import com.backend7.frameworkstudy.domain.board.domain.Board;
 import com.backend7.frameworkstudy.domain.board.dto.BoardCreateRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.BoardResponse;
-import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
 import com.backend7.frameworkstudy.domain.board.service.BoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
