@@ -26,6 +26,8 @@ public class SecurityConfig {
     public static final String[] GET_PUBLIC = new String[] {"/api/board"};
     public static final String[] POST_PUBLIC = new String[] {"/api/auth/sign-up", "/api/auth/login"};
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -37,7 +39,8 @@ public class SecurityConfig {
                             .permitAll()
                         .requestMatchers(HttpMethod.POST, POST_PUBLIC)
                             .permitAll()
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
