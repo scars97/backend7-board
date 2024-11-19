@@ -21,4 +21,11 @@ public class MemberService {
 
         return jwtTokenProvider.generateAccessToken(saveMember);
     }
+
+    public String loginUser(MemberCreateRequest request) {
+        Member findMember = memberRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
+
+        return jwtTokenProvider.generateAccessToken(findMember);
+    }
 }
