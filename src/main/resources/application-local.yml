@@ -49,3 +49,8 @@ spring:
   sql:
     init:
       mode: never
+
+jwt:
+  secret: api^-^frameworkStudy^-^test^-^token
+  access-token-expiration-minutes: 5
+  refresh-token-expiration-minutes: 30
