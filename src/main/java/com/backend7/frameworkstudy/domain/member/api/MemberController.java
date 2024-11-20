@@ -1,7 +1,9 @@
 package com.backend7.frameworkstudy.domain.member.api;
 
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
+import com.backend7.frameworkstudy.domain.member.dto.SignUpResponse;
 import com.backend7.frameworkstudy.domain.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +19,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> singUp(@RequestBody MemberCreateRequest request) {
+    public ResponseEntity<SignUpResponse> singUp(@Valid @RequestBody MemberCreateRequest request) {
         return ResponseEntity.ok(memberService.signUp(request));
     }
 }
