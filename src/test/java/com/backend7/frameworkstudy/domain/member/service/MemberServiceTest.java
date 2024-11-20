@@ -3,6 +3,7 @@ package com.backend7.frameworkstudy.domain.member.service;
 import com.backend7.frameworkstudy.domain.auth.JwtTokenProvider;
 import com.backend7.frameworkstudy.domain.member.domain.Member;
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
+import com.backend7.frameworkstudy.domain.member.dto.SignUpResponse;
 import com.backend7.frameworkstudy.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +31,36 @@ class MemberServiceTest {
     @InjectMocks
     private MemberService memberService;
 
+    @DisplayName("회원 가입 시 중복된 username이 존재하면 예외가 발생한다.")
+    @Test
+    void signUp_duplicateUsername_throwException() {
+        // given
+        given(memberRepository.existsByUsername(anyString())).willReturn(true);
+
+        // when //then
+        assertThatThrownBy(() -> memberService.signUp(new MemberCreateRequest("member", "12341234")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("중복된 username 입니다.");
+
+        verify(memberRepository, times(1)).existsByUsername(anyString());
+    }
+
+    @DisplayName("회원 가입에 성공 한다.")
+    @Test
+    void signUp_success() {
+        // given
+        MemberCreateRequest request = new MemberCreateRequest("member", "12341234");
+        Member mockMember = mock(Member.class);
+        given(memberRepository.save(any(Member.class))).willReturn(mockMember);
+
+        // when
+        SignUpResponse response = memberService.signUp(request);
+
+        //then
+        assertThat(response).isNotNull();
+        verify(memberRepository, times(1)).save(any(Member.class));
+    }
+
     @DisplayName("로그인 성공 시 Access 토큰이 발급된다.")
     @Test
     void loginUser() {
@@ -41,8 +73,7 @@ class MemberServiceTest {
         String responseToken = memberService.loginUser(new MemberCreateRequest(member.getUsername(), member.getPassword()));
 
         // then
-        then(responseToken).equals(TEST_ACCESS_TOKEN);
-
+        assertThat(responseToken).isEqualTo(TEST_ACCESS_TOKEN);
     }
 
     private Member createMember() {
