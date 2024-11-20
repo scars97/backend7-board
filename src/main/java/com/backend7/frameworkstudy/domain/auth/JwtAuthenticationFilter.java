@@ -34,7 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("[JwtAuthenticationFilter] - jwt 인증 필터");
 
         // PUBLIC 경로 검사
         if (isPublicPath(request)) {
