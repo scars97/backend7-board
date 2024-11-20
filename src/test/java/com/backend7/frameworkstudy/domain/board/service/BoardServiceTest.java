@@ -8,7 +8,7 @@ import com.backend7.frameworkstudy.domain.board.dto.request.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.response.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.exception.BoardException;
-import com.backend7.frameworkstudy.domain.board.exception.enumeration.ErrorType;
+import com.backend7.frameworkstudy.domain.board.exception.enumeration.BoardResultType;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,9 +26,10 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 class BoardServiceTest {
 
+    // MockBean을 하지 않으면 테스트 진행 X
+    // JWT 와 관련 없는 도메인 테스트에 굳이 선언을 해줘야 하는 건가
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
@@ -74,7 +75,7 @@ class BoardServiceTest {
         // when //then
         assertThatThrownBy(() -> boardService.findBoardBy(2L))
                 .isInstanceOf(BoardException.class)
-                .hasFieldOrPropertyWithValue("errorType", ErrorType.BOARD_NOT_FOUND)
+                .hasFieldOrPropertyWithValue("errorType", BoardResultType.BOARD_NOT_FOUND)
                 .extracting("errorType")
                 .extracting("status", "message")
                 .containsExactly(HttpStatus.NOT_FOUND, "존재하지 않은 게시글입니다.");
@@ -127,7 +128,7 @@ class BoardServiceTest {
         // when // then
         assertThatThrownBy(() -> boardService.editBoard(updateId, updateRequest))
                 .isInstanceOf(BoardException.class)
-                .hasFieldOrPropertyWithValue("errorType", ErrorType.PASSWORD_IS_NOT_MATCH)
+                .hasFieldOrPropertyWithValue("errorType", BoardResultType.PASSWORD_IS_NOT_MATCH)
                 .extracting("errorType")
                 .extracting("status", "message")
                 .containsExactly( HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
@@ -168,7 +169,7 @@ class BoardServiceTest {
         // when // then
         assertThatThrownBy(() -> boardService.deleteBoard(deleteId, deleteRequest))
                 .isInstanceOf(BoardException.class)
-                .hasFieldOrPropertyWithValue("errorType", ErrorType.PASSWORD_IS_NOT_MATCH)
+                .hasFieldOrPropertyWithValue("errorType", BoardResultType.PASSWORD_IS_NOT_MATCH)
                 .extracting("errorType")
                 .extracting("status", "message")
                 .containsExactly( HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");

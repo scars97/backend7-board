@@ -1,11 +1,14 @@
 package com.backend7.frameworkstudy.domain.board.repository;
 
+import com.backend7.frameworkstudy.domain.auth.JwtAuthenticationFilter;
+import com.backend7.frameworkstudy.domain.auth.JwtTokenProvider;
 import com.backend7.frameworkstudy.domain.board.domain.Board;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -15,6 +18,11 @@ import static org.assertj.core.api.Assertions.*;
 @ActiveProfiles("test")
 @SpringBootTest
 class BoardRepositoryTest {
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private BoardRepository boardRepository;

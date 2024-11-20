@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.backend7.frameworkstudy.domain.board.exception.enumeration.ErrorType.*;
+import static com.backend7.frameworkstudy.domain.board.exception.enumeration.BoardResultType.*;
 
 @Transactional(readOnly = true)
 @Service
