@@ -2,6 +2,7 @@ package com.backend7.frameworkstudy.domain.member.service;
 
 import com.backend7.frameworkstudy.domain.auth.JwtTokenProvider;
 import com.backend7.frameworkstudy.domain.member.domain.Member;
+import com.backend7.frameworkstudy.domain.member.dto.LoginRequest;
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
 import com.backend7.frameworkstudy.domain.member.dto.MemberResponse;
 import com.backend7.frameworkstudy.domain.member.exception.MemberException;
@@ -65,19 +66,53 @@ class MemberServiceTest {
         verify(memberRepository, times(1)).save(any(Member.class));
     }
 
-    @DisplayName("로그인 성공 시 Access 토큰이 발급된다.")
+    @DisplayName("로그인 시 존재하지 않는 회원인 경우 예외가 발생한다.")
+    @Test
+    void loginUser_notFound_ThrowException() {
+        // given
+        Member member = createMember();
+        given(memberRepository.findByUsername(anyString())).willReturn(Optional.empty());
+
+        // when //then
+        assertThatThrownBy(() -> memberService.loginUser(new LoginRequest("test1234", "12341234")))
+                .isInstanceOf(MemberException.class)
+                .hasFieldOrPropertyWithValue("errorType", MemberResultType.MEMBER_NOT_FOUND)
+                .extracting("errorType")
+                .extracting("status", "message")
+                .containsExactly(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다.");
+        verify(memberRepository, times(1)).findByUsername(anyString());
+    }
+
+    @DisplayName("로그인 시 비밀번호가 일치하지 않으면 예외가 발생한다.")
+    @Test
+    void loginUser_passwordNotMatched_ThrowException() {
+        // given
+        Member member = createMember();
+        given(memberRepository.findByUsername(anyString())).willReturn(Optional.ofNullable(member));
+
+        // when //then
+        assertThatThrownBy(() -> memberService.loginUser(new LoginRequest("test1234", "1111")))
+                .isInstanceOf(MemberException.class)
+                .hasFieldOrPropertyWithValue("errorType", MemberResultType.PASSWORD_IS_NOT_MATCH)
+                .extracting("errorType")
+                .extracting("status", "message")
+                .containsExactly(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        verify(memberRepository, times(1)).findByUsername(anyString());
+    }
+
+    @DisplayName("로그인 성공 시 회원 정보가 반환된다.")
     @Test
     void loginUser() {
         // given
         Member member = createMember();
         given(memberRepository.findByUsername(anyString())).willReturn(Optional.ofNullable(member));
-        given(jwtTokenProvider.generateAccessToken(any(Member.class))).willReturn(TEST_ACCESS_TOKEN);
 
         // when
-        String responseToken = memberService.loginUser(new MemberCreateRequest(member.getUsername(), member.getPassword()));
+        MemberResponse memberResponse = memberService.loginUser(new LoginRequest("member", "12341234"));
 
         // then
-        assertThat(responseToken).isEqualTo(TEST_ACCESS_TOKEN);
+        assertThat(memberResponse).isNotNull();
+        verify(memberRepository, times(1)).findByUsername(anyString());
     }
 
     private Member createMember() {
