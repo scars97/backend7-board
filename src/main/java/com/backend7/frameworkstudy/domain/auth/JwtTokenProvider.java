@@ -37,31 +37,30 @@ public class JwtTokenProvider {
         this.refreshTokenExpirationMinutes = refreshTokenExpirationMinutes;
     }
 
-    public String generateAccessToken(Member member) {
+    public String generateAccessToken(Long id) {
         return Jwts.builder()
-                .claims(createClaims(member))
-                .subject(member.getUsername())
+                .claims(createClaims(id))
+                .subject(String.valueOf(id))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(Date.from(Instant.now().plusSeconds(accessTokenExpirationMinutes * 60)))
                 .signWith(secretKey)
                 .compact();
     }
 
-    public String generateRefreshToken(Member member) {
+    public String generateRefreshToken(Long id) {
         return Jwts.builder()
-                .claims(createClaims(member))
-                .subject(member.getUsername())
+                .claims(createClaims(id))
+                .subject(String.valueOf(id))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(Date.from(Instant.now().plusSeconds(refreshTokenExpirationMinutes * 60)))
                 .signWith(secretKey)
                 .compact();
     }
 
-    private Map<String, Object> createClaims(final Member member) {
+    private Map<String, Object> createClaims(final Long id) {
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put("id", member.getId());
-        claims.put("username", member.getUsername());
+        claims.put("id", id);
 
         return claims;
     }
@@ -79,7 +78,6 @@ public class JwtTokenProvider {
 
         return MemberDetail.builder()
                 .id(claims.get("id", Long.class))
-                .username(claims.get("username", String.class))
                 .build();
     }
 
@@ -87,7 +85,7 @@ public class JwtTokenProvider {
         try {
             Claims claims = verifyToken(token);
             log.info("expireTime :{}", claims.getExpiration());
-            log.info("username :{}", claims.get("username"));
+            log.info("memberId : {}", claims.get("id"));
             return true;
 
         } catch (ExpiredJwtException exception) {

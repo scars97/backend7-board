@@ -2,8 +2,8 @@ package com.backend7.frameworkstudy.domain.member.service;
 
 import com.backend7.frameworkstudy.domain.auth.JwtTokenProvider;
 import com.backend7.frameworkstudy.domain.member.domain.Member;
+import com.backend7.frameworkstudy.domain.member.dto.LoginRequest;
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
-import com.backend7.frameworkstudy.domain.member.dto.SignUpResponse;
 import com.backend7.frameworkstudy.domain.member.dto.MemberResponse;
 import com.backend7.frameworkstudy.domain.member.exception.MemberException;
 import com.backend7.frameworkstudy.domain.member.repository.MemberRepository;
@@ -32,10 +32,15 @@ public class MemberService {
         return MemberResponse.of(saveMember);
     }
 
-    public String loginUser(MemberCreateRequest request) {
+    public MemberResponse loginUser(LoginRequest request) {
         Member findMember = memberRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
-        return jwtTokenProvider.generateAccessToken(findMember);
+        if (!request.getPassword().equals(findMember.getPassword())) {
+            throw new MemberException(PASSWORD_IS_NOT_MATCH);
+        }
+
+        findMember.renewToken(jwtTokenProvider.generateRefreshToken(findMember.getId()));
+        return MemberResponse.of(findMember);
     }
 }
