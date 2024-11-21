@@ -3,7 +3,9 @@ package com.backend7.frameworkstudy.domain.member.service;
 import com.backend7.frameworkstudy.domain.auth.JwtTokenProvider;
 import com.backend7.frameworkstudy.domain.member.domain.Member;
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
-import com.backend7.frameworkstudy.domain.member.dto.SignUpResponse;
+import com.backend7.frameworkstudy.domain.member.dto.MemberResponse;
+import com.backend7.frameworkstudy.domain.member.exception.MemberException;
+import com.backend7.frameworkstudy.domain.member.exception.MemberResultType;
 import com.backend7.frameworkstudy.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
@@ -39,9 +42,11 @@ class MemberServiceTest {
 
         // when //then
         assertThatThrownBy(() -> memberService.signUp(new MemberCreateRequest("member", "12341234")))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("중복된 username 입니다.");
-
+                .isInstanceOf(MemberException.class)
+                .hasFieldOrPropertyWithValue("errorType", MemberResultType.DUPLICATE_USERNAME)
+                .extracting("errorType")
+                .extracting("status", "message")
+                .containsExactly(HttpStatus.BAD_REQUEST, "중복된 username 입니다.");
         verify(memberRepository, times(1)).existsByUsername(anyString());
     }
 
@@ -49,12 +54,11 @@ class MemberServiceTest {
     @Test
     void signUp_success() {
         // given
-        MemberCreateRequest request = new MemberCreateRequest("member", "12341234");
         Member mockMember = mock(Member.class);
         given(memberRepository.save(any(Member.class))).willReturn(mockMember);
 
         // when
-        SignUpResponse response = memberService.signUp(request);
+        MemberResponse response = memberService.signUp(new MemberCreateRequest("member", "12341234"));
 
         //then
         assertThat(response).isNotNull();
