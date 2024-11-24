@@ -1,26 +1,29 @@
 package com.backend7.frameworkstudy.domain.member.api;
 
+import com.backend7.frameworkstudy.domain.auth.TokenResponse;
 import com.backend7.frameworkstudy.domain.member.dto.LoginRequest;
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
 import com.backend7.frameworkstudy.domain.member.service.MemberService;
 import com.backend7.frameworkstudy.global.error.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -80,11 +83,14 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    // TODO 쿠키, 헤더 설정으로 인해 테스트 실패
     @DisplayName("로그인에 성공한다.")
     @Test
     void loginUser() throws Exception {
         // given
         LoginRequest request = new LoginRequest("test1234", "12341234");
+
+        // TODO renewToken() 처럼 stubbing을 해주려는데 왜 안될까..
 
         // when //then
         mockMvc.perform(post("/api/auth/login")
@@ -96,5 +102,29 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.message").value("로그인에 성공하였습니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("refresh 토큰으로 재발급 요청 시 새로운 access 토큰이 발급된다.")
+    @Test
+    void renewToken() throws Exception {
+        // given
+        String refreshToken = "valid-refresh-token";
+        String newAccessToken = "new-access-token";
+        Cookie cookie = new Cookie("refresh", refreshToken);
+
+        when(memberService.renewToken(refreshToken)).thenReturn(TokenResponse.of(newAccessToken, refreshToken));
+
+        // when //then
+        mockMvc.perform(get("/api/auth/renew-token")
+                    .cookie(cookie)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("토큰이 재발급되었습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(jsonPath("$.data.accessToken").value(newAccessToken))
+                .andExpect(jsonPath("$.data.refreshToken").value(refreshToken));
     }
 }
