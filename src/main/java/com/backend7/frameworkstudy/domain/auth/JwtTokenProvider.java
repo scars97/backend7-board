@@ -81,6 +81,11 @@ public class JwtTokenProvider {
                 .build();
     }
 
+    public Long getId(String token) {
+        Claims claims = verifyToken(token);
+        return claims.get("id", Long.class);
+    }
+
     public boolean validateToken(String token) {
         try {
             Claims claims = verifyToken(token);

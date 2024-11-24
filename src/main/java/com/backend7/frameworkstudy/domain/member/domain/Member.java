@@ -23,15 +23,10 @@ public class Member extends BaseEntity {
 
     private String password;
 
-    private String token;
-
     @Builder
     public Member(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public void renewToken(String token) {
-        this.token = token;
-    }
 }
