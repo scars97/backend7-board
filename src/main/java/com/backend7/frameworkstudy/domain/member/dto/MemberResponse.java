@@ -11,7 +11,7 @@ public class MemberResponse {
     private String username;
 
     @Builder
-    private MemberResponse(Long id, String username) {
+    public MemberResponse(Long id, String username) {
         this.id = id;
         this.username = username;
     }
