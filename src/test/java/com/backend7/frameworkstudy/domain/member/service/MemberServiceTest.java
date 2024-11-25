@@ -1,7 +1,5 @@
 package com.backend7.frameworkstudy.domain.member.service;
 
-import com.backend7.frameworkstudy.domain.auth.JwtTokenProvider;
-import com.backend7.frameworkstudy.domain.auth.TokenResponse;
 import com.backend7.frameworkstudy.domain.member.domain.Member;
 import com.backend7.frameworkstudy.domain.member.dto.LoginRequest;
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
@@ -24,12 +22,6 @@ import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
-
-    private static final String TEST_ACCESS_TOKEN = "TestAccessToken";
-    private static final String TEST_REFRESH_TOKEN = "TestRefreshToken";
-
-    @Mock
-    private JwtTokenProvider jwtTokenProvider;
 
     @Mock
     private MemberRepository memberRepository;
@@ -115,38 +107,6 @@ class MemberServiceTest {
         // then
         assertThat(memberResponse).isNotNull();
         verify(memberRepository, times(1)).findByUsername(anyString());
-    }
-
-    @DisplayName("토큰 재발급 시 유효하지 않은 토큰이 전송된 경우 예외가 발생한다.")
-    @Test
-    void renewToken_InvalidToken_ThrowException() {
-        // given
-        Member member = createMember();
-        String invalidToken = "invalidToken";
-
-        // when //then
-        assertThatThrownBy(() -> memberService.renewToken(invalidToken))
-                .isInstanceOf(MemberException.class)
-                .hasFieldOrPropertyWithValue("errorType", MemberResultType.RETRY_LOGIN)
-                .extracting("errorType")
-                .extracting("status", "message")
-                .contains(HttpStatus.UNAUTHORIZED, "잘못된 토큰입니다. 다시 로그인해주세요.");
-    }
-
-    @DisplayName("토큰 재발급 시 access, refresh 토큰 모두 정상 발급된다.")
-    @Test
-    void renewToken_reissueToken() {
-        // given
-        Member member = createMember();
-        given(jwtTokenProvider.validateToken(anyString())).willReturn(true);
-        given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
-
-        // when
-        TokenResponse response = memberService.renewToken(TEST_REFRESH_TOKEN);
-
-        //then
-        assertThat(response).isNotNull();
-        verify(memberRepository, times(1)).findById(anyLong());
     }
 
     private Member createMember() {

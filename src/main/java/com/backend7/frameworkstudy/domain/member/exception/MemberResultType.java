@@ -8,7 +8,6 @@ public enum MemberResultType implements ApiResultType {
     // Success
     SIGN_UP(HttpStatus.OK, "회원 가입에 성공하였습니다."),
     LOGIN(HttpStatus.OK, "로그인에 성공하였습니다."),
-    REISSUE_TOKEN(HttpStatus.OK, "토큰이 재발급되었습니다."),
 
     // Error
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "중복된 username 입니다."),

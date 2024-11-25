@@ -1,14 +1,12 @@
 package com.backend7.frameworkstudy.domain.member.api;
 
 import com.backend7.frameworkstudy.domain.auth.JwtTokenProvider;
-import com.backend7.frameworkstudy.domain.auth.TokenResponse;
 import com.backend7.frameworkstudy.domain.member.dto.LoginRequest;
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
 import com.backend7.frameworkstudy.domain.member.dto.MemberResponse;
 import com.backend7.frameworkstudy.domain.member.service.MemberService;
 import com.backend7.frameworkstudy.global.error.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberControllerTest {
 
     private static final String TEST_ACCESS_TOKEN = "TestAccessToken";
-    private static final String TEST_REFRESH_TOKEN = "TestRefreshToken";
 
     @InjectMocks
     private MemberController memberController;
@@ -101,7 +98,6 @@ class MemberControllerTest {
         LoginRequest request = new LoginRequest("test1234", "12341234");
 
         given(jwtTokenProvider.generateAccessToken(anyLong())).willReturn(TEST_ACCESS_TOKEN);
-        given(jwtTokenProvider.generateRefreshToken(anyLong())).willReturn(TEST_REFRESH_TOKEN);
         given(memberService.loginUser(any(LoginRequest.class))).willReturn(new MemberResponse(1L, "test1234"));
 
         // when //then
@@ -110,9 +106,6 @@ class MemberControllerTest {
                     .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(cookie().value("refresh", TEST_REFRESH_TOKEN))
-                .andExpect(cookie().httpOnly("refresh", true))
-                .andExpect(cookie().path("refresh", "/api/**"))
                 .andExpect(header().string("Authorization", "Bearer " + TEST_ACCESS_TOKEN))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.status").value("OK"))
@@ -122,27 +115,4 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.data.username").value("test1234"));
     }
 
-    @DisplayName("refresh 토큰으로 재발급 요청 시 새로운 access 토큰이 발급된다.")
-    @Test
-    void renewToken() throws Exception {
-        // given
-        String refreshToken = "valid-refresh-token";
-        String newAccessToken = "new-access-token";
-        Cookie cookie = new Cookie("refresh", refreshToken);
-
-        given(memberService.renewToken(refreshToken)).willReturn(TokenResponse.of(newAccessToken, refreshToken));
-
-        // when //then
-        mockMvc.perform(get("/api/auth/renew-token")
-                    .cookie(cookie)
-                    .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.status").value("OK"))
-                .andExpect(jsonPath("$.message").value("토큰이 재발급되었습니다."))
-                .andExpect(jsonPath("$.data").isNotEmpty())
-                .andExpect(jsonPath("$.data.accessToken").value(newAccessToken))
-                .andExpect(jsonPath("$.data.refreshToken").value(refreshToken));
-    }
 }

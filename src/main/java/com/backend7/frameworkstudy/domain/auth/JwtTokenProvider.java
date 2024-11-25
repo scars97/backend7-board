@@ -1,6 +1,5 @@
 package com.backend7.frameworkstudy.domain.auth;
 
-import com.backend7.frameworkstudy.domain.member.domain.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

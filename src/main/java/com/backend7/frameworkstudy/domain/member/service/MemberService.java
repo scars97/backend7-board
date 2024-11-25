@@ -1,7 +1,5 @@
 package com.backend7.frameworkstudy.domain.member.service;
 
-import com.backend7.frameworkstudy.domain.auth.JwtTokenProvider;
-import com.backend7.frameworkstudy.domain.auth.TokenResponse;
 import com.backend7.frameworkstudy.domain.member.domain.Member;
 import com.backend7.frameworkstudy.domain.member.dto.LoginRequest;
 import com.backend7.frameworkstudy.domain.member.dto.MemberCreateRequest;
@@ -20,7 +18,6 @@ import static com.backend7.frameworkstudy.domain.member.exception.MemberResultTy
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public MemberResponse signUp(MemberCreateRequest request) {
@@ -45,17 +42,4 @@ public class MemberService {
         return MemberResponse.of(findMember);
     }
 
-    public TokenResponse renewToken(String refreshToken) {
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new MemberException(RETRY_LOGIN);
-        }
-
-        Long id = jwtTokenProvider.getId(refreshToken);
-        Member findMember = memberRepository.findById(id).orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
-
-        return TokenResponse.of(
-                "Bearer " + jwtTokenProvider.generateAccessToken(findMember.getId()),
-                jwtTokenProvider.generateRefreshToken(findMember.getId())
-        );
-    }
 }
