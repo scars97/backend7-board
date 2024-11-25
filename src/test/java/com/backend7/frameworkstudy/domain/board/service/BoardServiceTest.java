@@ -10,6 +10,8 @@ import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.exception.BoardException;
 import com.backend7.frameworkstudy.domain.board.exception.enumeration.BoardResultType;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
+import com.backend7.frameworkstudy.domain.member.domain.Member;
+import com.backend7.frameworkstudy.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,32 +39,34 @@ class BoardServiceTest {
     private BoardService boardService;
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @AfterEach
     void tearDown() {
         boardRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
     }
 
     @DisplayName("게시글이 정상적으로 저장되고, 작성한 게시글이 반환된다.")
     @Test
     void createBoard() {
         // given
-        Board board = create();
+        Member member = new Member(1L, "test1234", "qwer1234");
+        memberRepository.save(member);
         BoardCreateRequest request = BoardCreateRequest.builder()
-                .title(board.getTitle())
-                .content(board.getContent())
-                .username(board.getUsername())
-                .password(board.getPassword())
+                .title("게시글1")
+                .content("게시글 내용")
                 .build();
 
         // when
-        BoardResponse response = boardService.createBoard(request);
+        BoardResponse response = boardService.createBoard(member.getId(), request);
 
         //then
         assertThat(response.getId()).isNotNull();
         assertThat(response)
                 .extracting("title", "content", "username")
-                .contains("게시글1", "게시글 내용", "test@test.com");
+                .contains("게시글1", "게시글 내용", "test1234");
     }
 
     @DisplayName("해당 id의 게시글이 존재하지 않는 경우 예외가 발생한다.")
