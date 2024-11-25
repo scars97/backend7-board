@@ -22,6 +22,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/*
+* TODO security 설정으로 인해 테스트 실패. - 수정 필요
+* */
 @ActiveProfiles("test")
 @WebMvcTest(BoardController.class)
 class BoardControllerTest {
@@ -42,11 +45,9 @@ class BoardControllerTest {
         BoardCreateRequest request = BoardCreateRequest.builder()
                 .title("게시글1")
                 .content("게시글 작성 내용 ㅇㅇㅇㅇㅇㅇㅇㅇ")
-                .username("test@test.com")
-                .password("12341234")
                 .build();
 
-        given(boardService.createBoard(any(BoardCreateRequest.class)))
+        given(boardService.createBoard(anyLong(), any(BoardCreateRequest.class)))
                 .willReturn(BoardResponse.builder()
                         .id(1L)
                         .title("게시글1")
