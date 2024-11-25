@@ -2,16 +2,18 @@ package com.backend7.frameworkstudy.domain.auth;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 @Getter
+@NoArgsConstructor
 public class MemberDetail implements UserDetails {
 
-    private final Long id;
-    private final String username;
+    private Long id;
+    private String username;
 
     @Builder
     public MemberDetail(Long id, String username) {

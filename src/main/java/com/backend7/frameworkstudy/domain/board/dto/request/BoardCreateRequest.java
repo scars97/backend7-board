@@ -11,24 +11,19 @@ public class BoardCreateRequest {
 
     private String title;
     private String content;
-    private String username;
-    private String password;
+
 
     // 테스트 용도
     @Builder
-    public BoardCreateRequest(String title, String content, String username, String password) {
+    public BoardCreateRequest(String title, String content) {
         this.title = title;
         this.content = content;
-        this.username = username;
-        this.password = password;
     }
 
     public Board toEntity() {
         return Board.builder()
                 .title(title)
                 .content(content)
-                .username(username)
-                .password(password)
                 .build();
     }
 }

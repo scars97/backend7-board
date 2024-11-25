@@ -7,6 +7,10 @@ import com.backend7.frameworkstudy.domain.board.dto.response.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.exception.BoardException;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
+import com.backend7.frameworkstudy.domain.member.domain.Member;
+import com.backend7.frameworkstudy.domain.member.exception.MemberException;
+import com.backend7.frameworkstudy.domain.member.exception.MemberResultType;
+import com.backend7.frameworkstudy.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +25,18 @@ import static com.backend7.frameworkstudy.domain.board.exception.enumeration.Boa
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
-    public BoardResponse createBoard(BoardCreateRequest request) {
+    public BoardResponse createBoard(Long memberId, BoardCreateRequest request) {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberResultType.MEMBER_NOT_FOUND));
+
         Board board = request.toEntity();
 
-        Board saveBoard = boardRepository.save(board);
+        findMember.addBoard(board);
 
+        Board saveBoard = boardRepository.save(board);
         return BoardResponse.of(saveBoard);
     }
 
