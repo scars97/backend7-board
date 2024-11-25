@@ -1,6 +1,7 @@
 package com.backend7.frameworkstudy.global.error;
 
 import com.backend7.frameworkstudy.domain.board.exception.BoardException;
+import com.backend7.frameworkstudy.domain.member.exception.MemberException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BoardException.class)
     public ResponseEntity<ErrorResponse> boardExceptionHandler(BoardException exception) {
         log.error("Board Exception occurred : {}", exception.getErrorType());
+        return ErrorResponse.of(exception.getErrorType());
+    }
+
+    @ExceptionHandler(MemberException.class)
+    public ResponseEntity<ErrorResponse> memberExceptionHandler(MemberException exception) {
+        log.error("Member Exception occurred : {}", exception.getErrorType());
         return ErrorResponse.of(exception.getErrorType());
     }
 }
