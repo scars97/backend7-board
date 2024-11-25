@@ -2,10 +2,8 @@ package com.backend7.frameworkstudy.domain.board.domain;
 
 import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.backend7.frameworkstudy.domain.member.domain.Member;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +16,7 @@ public class Board extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_id")
     private Long id;
 
     private String title;
@@ -28,12 +27,21 @@ public class Board extends BaseEntity {
 
     private String password;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
     public Board(String title, String content, String username, String password) {
         this.title = title;
         this.content = content;
         this.username = username;
         this.password = password;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+        this.username = member.getUsername();
     }
 
     public void update(BoardUpdateRequest request) {
