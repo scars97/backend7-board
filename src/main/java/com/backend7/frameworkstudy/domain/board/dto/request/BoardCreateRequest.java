@@ -12,7 +12,6 @@ public class BoardCreateRequest {
     private String title;
     private String content;
 
-
     // 테스트 용도
     @Builder
     public BoardCreateRequest(String title, String content) {

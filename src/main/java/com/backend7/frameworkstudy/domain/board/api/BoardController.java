@@ -2,7 +2,6 @@ package com.backend7.frameworkstudy.domain.board.api;
 
 import com.backend7.frameworkstudy.domain.auth.MemberDetail;
 import com.backend7.frameworkstudy.domain.board.dto.request.BoardCreateRequest;
-import com.backend7.frameworkstudy.domain.board.dto.request.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.response.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.service.BoardService;
@@ -26,8 +25,7 @@ public class BoardController {
 
     @PostMapping("")
     public ApiResponse<BoardResponse> createBoard(@RequestBody BoardCreateRequest request, @AuthenticationPrincipal MemberDetail memberDetail) {
-        Long memberId = memberDetail.getId();
-        BoardResponse response = boardService.createBoard(memberId, request);
+        BoardResponse response = boardService.createBoard(memberDetail.getId(), request);
         return ApiResponse.ok(CREATE_BOARD, response);
     }
 
@@ -45,15 +43,15 @@ public class BoardController {
 
     @PatchMapping("/{id}")
     public ApiResponse<BoardResponse> editBoard(
-            @PathVariable("id") Long id, @RequestBody BoardUpdateRequest request) {
-        BoardResponse response = boardService.editBoard(id, request);
+            @PathVariable("id") Long boardId, @RequestBody BoardUpdateRequest request, @AuthenticationPrincipal MemberDetail memberDetail) {
+        BoardResponse response = boardService.editBoard(memberDetail.getId(), boardId, request);
         return ApiResponse.ok(EDIT_BOARD, response);
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteBoard(
-            @PathVariable("id") Long id, @RequestBody BoardDeleteRequest request) {
-        boardService.deleteBoard(id, request);
+            @PathVariable("id") Long boardId, @AuthenticationPrincipal MemberDetail memberDetail) {
+        boardService.deleteBoard(memberDetail.getId(), boardId);
         return ApiResponse.ok(DELETE_BOARD);
     }
 }

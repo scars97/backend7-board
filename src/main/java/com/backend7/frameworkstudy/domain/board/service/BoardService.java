@@ -2,7 +2,6 @@ package com.backend7.frameworkstudy.domain.board.service;
 
 import com.backend7.frameworkstudy.domain.board.domain.Board;
 import com.backend7.frameworkstudy.domain.board.dto.request.BoardCreateRequest;
-import com.backend7.frameworkstudy.domain.board.dto.request.BoardDeleteRequest;
 import com.backend7.frameworkstudy.domain.board.dto.response.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.exception.BoardException;
@@ -56,12 +55,13 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponse editBoard(Long id, BoardUpdateRequest request) {
-        Board findBoard = boardRepository.findById(id)
+    public BoardResponse editBoard(Long memberId, Long boardId, BoardUpdateRequest request) {
+        Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BOARD_NOT_FOUND));
 
-        if (findBoard.isNotSamePassword(request.getPassword())) {
-            throw new BoardException(PASSWORD_IS_NOT_MATCH);
+        Long memberIdOfFindBoard = findBoard.getMember().getId();
+        if (!memberId.equals(memberIdOfFindBoard)) {
+            throw new BoardException(CAN_NOT_EDIT_ANOTHER_BOARD);
         }
 
         findBoard.update(request);
@@ -69,14 +69,15 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoard(Long id, BoardDeleteRequest request) {
-        Board findBoard = boardRepository.findById(id)
+    public void deleteBoard(Long memberId, Long boardId) {
+        Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BOARD_NOT_FOUND));
 
-        if (findBoard.isNotSamePassword(request.getPassword())) {
-            throw new BoardException(PASSWORD_IS_NOT_MATCH);
+        Long memberIdOfFindBoard = findBoard.getMember().getId();
+        if (!memberId.equals(memberIdOfFindBoard)) {
+            throw new BoardException(CAN_NOT_DELETE_ANOTHER_BOARD);
         }
 
-        boardRepository.deleteById(id);
+        boardRepository.deleteById(boardId);
     }
 }

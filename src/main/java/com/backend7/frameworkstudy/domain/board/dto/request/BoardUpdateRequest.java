@@ -9,15 +9,11 @@ import lombok.NoArgsConstructor;
 public class BoardUpdateRequest {
 
     private String title;
-    private String username;
     private String content;
-    private String password;
 
     @Builder
-    public BoardUpdateRequest(String title, String username, String content, String password) {
+    public BoardUpdateRequest(String title, String content) {
         this.title = title;
-        this.username = username;
         this.content = content;
-        this.password = password;
     }
 }

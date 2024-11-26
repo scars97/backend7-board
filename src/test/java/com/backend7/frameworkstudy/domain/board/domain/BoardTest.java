@@ -13,7 +13,7 @@ class BoardTest {
     void createBoard() {
         // given
         Member member = new Member(1L, "test1234", "qwer1234");
-        Board board = new Board("게시글", "게시글 내용", "", "1234");
+        Board board = new Board("게시글", "게시글 내용");
 
         // when
         member.addBoard(board);

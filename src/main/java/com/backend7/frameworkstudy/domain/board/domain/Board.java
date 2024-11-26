@@ -25,18 +25,21 @@ public class Board extends BaseEntity {
 
     private String username;
 
-    private String password;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Builder
-    public Board(String title, String content, String username, String password) {
+    // 테스트용
+    public Board(Long id, String title, String content) {
+        this.id = id;
         this.title = title;
         this.content = content;
-        this.username = username;
-        this.password = password;
+    }
+
+    @Builder
+    public Board(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
     public void setMember(Member member) {
@@ -47,11 +50,5 @@ public class Board extends BaseEntity {
     public void update(BoardUpdateRequest request) {
         this.title = request.getTitle();
         this.content = request.getContent();
-        this.username = request.getUsername();
-    }
-
-    // 고민필요 - 수정뿐만 아니라 삭제도 password 체크를 해야 한다.
-    public boolean isNotSamePassword(String requestPassword) {
-        return !this.password.equals(requestPassword);
     }
 }

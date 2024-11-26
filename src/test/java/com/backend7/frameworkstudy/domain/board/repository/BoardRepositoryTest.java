@@ -99,8 +99,6 @@ class BoardRepositoryTest {
         return Board.builder()
                 .title(title)
                 .content(content)
-                .username("test@test.com")
-                .password("1234")
                 .build();
     }
 
