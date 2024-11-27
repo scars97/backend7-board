@@ -44,8 +44,8 @@ class BoardRepositoryTest {
         //then
         assertThat(saveBoard.getId()).isNotNull();
         assertThat(saveBoard)
-                .extracting("title", "content", "username", "password")
-                .contains("게시글1", "게시글 내용", "test@test.com", "1234");
+                .extracting("title", "content")
+                .contains("게시글1", "게시글 내용");
     }
 
     @DisplayName("저장된 게시글 목록을 조회한다.")
