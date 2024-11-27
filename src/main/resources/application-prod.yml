@@ -21,3 +21,8 @@ spring:
   h2:
     console:
       enabled: true
+
+jwt:
+  secret: api^-^frameworkStudy^-^secret^-^token
+  access-token-expiration-minutes: 5
+  refresh-token-expiration-minutes: 30
