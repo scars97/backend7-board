@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import static com.backend7.frameworkstudy.domain.member.exception.MemberResultType.*;
@@ -25,6 +26,7 @@ public class MemberController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/sign-up")
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "회원가입")
     public ApiResponse<MemberResponse> singUp(@Valid @RequestBody MemberCreateRequest request) {
         return ApiResponse.ok(SIGN_UP, memberService.signUp(request));

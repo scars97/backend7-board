@@ -41,7 +41,7 @@ class MemberServiceTest {
                 .hasFieldOrPropertyWithValue("errorType", MemberResultType.DUPLICATE_USERNAME)
                 .extracting("errorType")
                 .extracting("status", "message")
-                .containsExactly(HttpStatus.BAD_REQUEST, "중복된 username 입니다.");
+                .containsExactly(HttpStatus.CONFLICT, "중복된 username 입니다.");
         verify(memberRepository, times(1)).existsByUsername(anyString());
     }
 

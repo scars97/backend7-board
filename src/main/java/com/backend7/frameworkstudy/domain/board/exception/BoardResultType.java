@@ -1,4 +1,4 @@
-package com.backend7.frameworkstudy.domain.board.exception.enumeration;
+package com.backend7.frameworkstudy.domain.board.exception;
 
 import com.backend7.frameworkstudy.global.common.ApiResultType;
 import org.springframework.http.HttpStatus;
@@ -8,7 +8,7 @@ public enum BoardResultType implements ApiResultType {
     // Success
     LOADED_BOARD_LIST(HttpStatus.OK, "게시글 목록 조회 성공"),
     LOADED_BOARD(HttpStatus.OK, "게시글 조회 성공"),
-    CREATE_BOARD(HttpStatus.OK, "게시글이 저장되었습니다."),
+    CREATE_BOARD(HttpStatus.CREATED, "게시글이 저장되었습니다."),
     EDIT_BOARD(HttpStatus.OK, "게시글이 수정되었습니다."),
     DELETE_BOARD(HttpStatus.NO_CONTENT, "게시글이 삭제되었습니다."),
 

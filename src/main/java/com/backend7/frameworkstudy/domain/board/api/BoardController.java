@@ -9,12 +9,13 @@ import com.backend7.frameworkstudy.global.common.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.backend7.frameworkstudy.domain.board.exception.enumeration.BoardResultType.*;
+import static com.backend7.frameworkstudy.domain.board.exception.BoardResultType.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "게시글 작성")
     public ApiResponse<BoardResponse> createBoard(@RequestBody BoardCreateRequest request, @AuthenticationPrincipal MemberDetail memberDetail) {
         BoardResponse response = boardService.createBoard(memberDetail.getId(), request);
@@ -54,6 +56,7 @@ public class BoardController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "게시글 삭제")
     public ApiResponse<Void> deleteBoard(
             @PathVariable("id") Long boardId, @AuthenticationPrincipal MemberDetail memberDetail) {

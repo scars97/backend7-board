@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.backend7.frameworkstudy.domain.board.exception.enumeration.BoardResultType.*;
+import static com.backend7.frameworkstudy.domain.board.exception.BoardResultType.*;
 
 @Transactional(readOnly = true)
 @Service

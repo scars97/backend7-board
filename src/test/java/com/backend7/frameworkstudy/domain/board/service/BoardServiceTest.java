@@ -5,7 +5,7 @@ import com.backend7.frameworkstudy.domain.board.dto.request.BoardCreateRequest;
 import com.backend7.frameworkstudy.domain.board.dto.request.BoardUpdateRequest;
 import com.backend7.frameworkstudy.domain.board.dto.response.BoardResponse;
 import com.backend7.frameworkstudy.domain.board.exception.BoardException;
-import com.backend7.frameworkstudy.domain.board.exception.enumeration.BoardResultType;
+import com.backend7.frameworkstudy.domain.board.exception.BoardResultType;
 import com.backend7.frameworkstudy.domain.board.repository.BoardRepository;
 import com.backend7.frameworkstudy.domain.member.domain.Member;
 import com.backend7.frameworkstudy.domain.member.repository.MemberRepository;
