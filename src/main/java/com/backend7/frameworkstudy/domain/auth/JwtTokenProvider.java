@@ -69,7 +69,8 @@ public class JwtTokenProvider {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.split(" ")[1];
         }
-        return null;
+
+        throw new JwtErrorException("인증이 필요한 요청입니다.");
     }
 
     public MemberDetail getMember(String token) {
@@ -94,13 +95,10 @@ public class JwtTokenProvider {
 
         } catch (ExpiredJwtException exception) {
             log.error("Token Expired");
-            return false;
+            throw new JwtErrorException("만료된 토큰입니다.");
         } catch (JwtException exception) {
             log.error("Token Tampered");
-            return false;
-        } catch (NullPointerException exception) {
-            log.error("Token is null");
-            return false;
+            throw new JwtErrorException("위조된 토큰입니다.");
         }
     }
 

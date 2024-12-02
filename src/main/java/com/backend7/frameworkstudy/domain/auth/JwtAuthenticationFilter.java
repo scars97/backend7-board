@@ -8,6 +8,7 @@ import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -35,38 +36,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // PUBLIC 경로 검사
-        if (isPublicPath(request)) {
+        try {
+            // PUBLIC 경로 검사
+            if (isPublicPath(request)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            log.info("토큰 검증 시작");
+            String token = jwtTokenProvider.resolveAccessToken(request);
+            if (token == null || !jwtTokenProvider.validateToken(token)) {
+                return;
+            }
+            log.info("토큰 검증 완료");
+
+            // user 정보 불러오기
+            MemberDetail memberDetail = jwtTokenProvider.getMember(token);
+
+            // SecurityContextHolder 컨텍스트에 저장
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(memberDetail, null, memberDetail.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+
             filterChain.doFilter(request, response);
-            return;
-        }
-
-        log.info("토큰 검증 시작");
-
-        // token 추출
-        String token = jwtTokenProvider.resolveAccessToken(request);
-        if (token == null) {
-            log.info("No access token found");
+        } catch (JwtErrorException ex) {
+            log.error(ex.getMessage());
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            response.getWriter().write(
+                    "{\"code\": \"" + HttpStatus.UNAUTHORIZED.value() + "\", "
+                            + "\"status\": \"" +  HttpStatus.UNAUTHORIZED.name() + "\", "
+                            + "\"message\": \"" + ex.getMessage() + "\"}");
         }
-
-        // 유효성 검사
-        if (!jwtTokenProvider.validateToken(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        log.info("토큰 검증 완료");
-
-        // user 정보 불러오기
-        MemberDetail memberDetail = jwtTokenProvider.getMember(token);
-
-        // SecurityContextHolder 컨텍스트에 저장
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(memberDetail, null, memberDetail.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
     }
 
     private boolean isPublicPath(HttpServletRequest request) {

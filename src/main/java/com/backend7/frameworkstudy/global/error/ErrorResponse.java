@@ -19,8 +19,7 @@ public class ErrorResponse {
     }
 
     public static ResponseEntity<ErrorResponse> of(ApiResultType failType) {
-        return ResponseEntity.status(failType.getStatus()).body(
-                new ErrorResponse(failType.getStatus(), failType.getMessage())
-        );
+        return ResponseEntity.status(failType.getStatus())
+                .body(new ErrorResponse(failType.getStatus(), failType.getMessage()));
     }
 }
