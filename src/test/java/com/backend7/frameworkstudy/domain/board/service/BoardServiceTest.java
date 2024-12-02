@@ -155,10 +155,10 @@ class BoardServiceTest {
         // when //then
         assertThatThrownBy(() -> boardService.editBoard(memberId, boardId, updateRequest))
                 .isInstanceOf(BoardException.class)
-                .hasFieldOrPropertyWithValue("errorType", BoardResultType.CAN_NOT_EDIT_ANOTHER_BOARD)
+                .hasFieldOrPropertyWithValue("errorType", BoardResultType.CANNOT_EDIT_OTHER_BOARD)
                 .extracting("errorType")
                 .extracting("status", "message")
-                .containsExactly( HttpStatus.BAD_REQUEST, "다른 회원의 게시글은 수정할 수 없습니다.");
+                .containsExactly( HttpStatus.FORBIDDEN, "다른 회원의 게시글은 수정할 수 없습니다.");
         then(boardRepository).should().findById(anyLong());
     }
 
@@ -216,10 +216,10 @@ class BoardServiceTest {
         // when // then
         assertThatThrownBy(() -> boardService.deleteBoard(memberId, boardId))
                 .isInstanceOf(BoardException.class)
-                .hasFieldOrPropertyWithValue("errorType", BoardResultType.CAN_NOT_DELETE_ANOTHER_BOARD)
+                .hasFieldOrPropertyWithValue("errorType", BoardResultType.CANNOT_DELETE_OTHER_BOARD)
                 .extracting("errorType")
                 .extracting("status", "message")
-                .containsExactly( HttpStatus.BAD_REQUEST, "다른 회원의 게시글은 삭제할 수 없습니다.");
+                .containsExactly( HttpStatus.FORBIDDEN, "다른 회원의 게시글은 삭제할 수 없습니다.");
         assertThat(boardRepository.existsById(1L)).isTrue();
         then(boardRepository).should().findById(anyLong());
         then(boardRepository).should().existsById(anyLong());

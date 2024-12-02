@@ -61,7 +61,7 @@ public class BoardService {
 
         Long memberIdOfFindBoard = findBoard.getMember().getId();
         if (!memberId.equals(memberIdOfFindBoard)) {
-            throw new BoardException(CAN_NOT_EDIT_ANOTHER_BOARD);
+            throw new BoardException(CANNOT_EDIT_OTHER_BOARD);
         }
 
         findBoard.update(request);
@@ -75,7 +75,7 @@ public class BoardService {
 
         Long memberIdOfFindBoard = findBoard.getMember().getId();
         if (!memberId.equals(memberIdOfFindBoard)) {
-            throw new BoardException(CAN_NOT_DELETE_ANOTHER_BOARD);
+            throw new BoardException(CANNOT_DELETE_OTHER_BOARD);
         }
 
         boardRepository.deleteById(boardId);
