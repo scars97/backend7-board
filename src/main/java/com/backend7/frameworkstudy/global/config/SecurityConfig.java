@@ -21,7 +21,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    public static final String[] GET_PUBLIC = new String[] {"/api/board/**", "/api/auth/renew-token"};
+    public static final String[] GET_PUBLIC = new String[]
+        {
+            "/api/board/**",
+            "/api/auth/renew-token",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
+        };
     public static final String[] POST_PUBLIC = new String[] {"/api/auth/sign-up", "/api/auth/login"};
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
